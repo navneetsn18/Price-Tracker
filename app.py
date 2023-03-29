@@ -4,7 +4,7 @@ from flask import Flask,request
 import modules.user.User as user
 import modules.products.Products as products
 from threading import Thread
-# import jobs.Jobs as Jobs
+import jobs.Jobs as jobs
 from dotenv import load_dotenv
 
 app = Flask(__name__)
@@ -46,5 +46,15 @@ def deleteProduct():
 def deleteAllProducts():
     return json.loads(json_util.dumps(products.deleteAllProducts(request.args)))
 
+@app.route('/check', methods=['GET'])
+def check():
+    return json.loads(json_util.dumps(jobs.check(request.args)))
+
+
 if __name__== "__main__":
     app.run(debug=True,port=int(os.environ.get('PORT',8000)))
+
+
+
+
+    # 1st thing is to creat a method that will get all the prodycts and check their prices and id price is smaller then target then add that to today mailed db

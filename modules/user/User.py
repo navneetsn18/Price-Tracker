@@ -16,6 +16,7 @@ def addUser(args):
     else:
         data = {
             "username": args["username"],
+            "email": args["email"],
             "track": []
         }
         collection.insert_one(data)
