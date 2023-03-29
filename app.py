@@ -53,8 +53,3 @@ def check():
 
 if __name__== "__main__":
     app.run(debug=True,port=int(os.environ.get('PORT',8000)))
-
-
-
-
-    # 1st thing is to creat a method that will get all the prodycts and check their prices and id price is smaller then target then add that to today mailed db
