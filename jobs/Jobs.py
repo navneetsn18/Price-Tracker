@@ -1,4 +1,4 @@
-import os
+import os,time
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import modules.extractor.Amazon as Amazon
@@ -25,26 +25,32 @@ def check(args):
     collection = db.userdata.find()
 
     for userdata in collection:
+        print("Checking Data for {}".format(userdata["username"]))
         items = userdata["track"]
-        currect_data = {}
+        current_data = {}
         for item in items:
+            print("     Checking Data for {} with id {}".format(item["name"],item["id"]))
             if "amazon" in item["url"]:
                 try:
-                    currect_data = Amazon.getAmazonData(item["url"])
+                    current_data = Amazon.getAmazonData(item["url"])
                 except:
                     print({"message": "No Data Found For The Given Url"})
+                    continue
             elif "flipkart" in item["url"]:
                 try:
-                    currect_data = Flipkart.getFlipkartData(item["url"])
+                    current_data = Flipkart.getFlipkartData(item["url"])
                 except:
                     print({"message": "No Data Found For The Given Url"})
+                    continue
             elif "myntra" in item["url"]:
                 try:
-                    currect_data = Myntra.getMyntraData(item["url"])
+                    current_data = Myntra.getMyntraData(item["url"])
                 except:
                     print({"message": "No Data Found For The Given Url"})
-            if currect_data["price"]<=float(item["target"]):
+                    continue
+            if float(current_data["price"])<=float(item["target"]):
                 if item["id"] not in list(db.tracked_today.find_one()["today"]):
                     db.tracked_today.update_one({},{"$push": {"today": item["id"]}})
-                    Mail.sendEmail(userdata["username"],userdata["email"],item["name"],item["url"],currect_data["price"])
+                    Mail.sendEmail(userdata["username"],userdata["email"],item["name"],item["url"],current_data["price"])
+                    print("Sent Mail to : {} with email {} for {} having url {} whose current price is {}".format(userdata["username"],userdata["email"],item["name"],item["url"],current_data["price"]))
     return {"message" : "success"}

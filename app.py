@@ -42,6 +42,10 @@ def addProduct():
 def deleteProduct():
     return json.loads(json_util.dumps(products.deleteProduct(request.args)))
 
+@app.route('/updateproduct', methods=['PUT'])
+def updateProduct():
+    return json.loads(json_util.dumps(products.updateProduct(request.args)))
+
 @app.route('/deleteallproducts', methods=['DELETE'])
 def deleteAllProducts():
     return json.loads(json_util.dumps(products.deleteAllProducts(request.args)))

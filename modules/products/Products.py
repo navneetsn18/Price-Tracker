@@ -54,6 +54,21 @@ def addProduct(args):
         return {"message": "User Does Not Exists"}
 
 
+def updateProduct(args):
+    if collection.find_one({"username": args["username"]}):
+        products = collection.find_one({"username": args["username"]})["track"]
+        for product in products:
+            if product['id'] == args.get("id"):
+                collection.update_one({"username": args["username"], "track.id": args["id"]},
+                                      {"$set": {"track.$.target": args.get("target")}})
+                return {"message": "Updated "+product['name']+" for --> "+args["username"]}
+        return {"message": "Incorrect ID!!"}
+    else:
+        return {"message": "User Does Not Exists"}
+
+    # {"username": args["username"]},{"track": {"id": args.get('id')}} {"$set": {}}
+
+
 def deleteProduct(args):
     if collection.find_one({"username": args["username"]}):
         products = collection.find_one({"username": args["username"]})["track"]
